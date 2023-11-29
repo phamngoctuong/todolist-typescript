@@ -1,6 +1,6 @@
 import * as React from 'react';
-import TaskControlSearch from './TaskControlSearch';
-import TaskControlSort from './TaskControlSort';
+import TaskSearchControl from './TaskSearchControl';
+import TaskSortControl from './TaskSortControl';
 interface IAppProps { [propName: string]: any }
 interface IAppState {
 }
@@ -10,20 +10,11 @@ class TaskControl extends React.Component<IAppProps, IAppState> {
     this.state = {
     };
   }
-  onSearch =  (keyword: string) => {
-    return this.props.onSearch(keyword);
-  };
-  onClickSearch =  (keyword: string) => {
-    return this.props.onClickSearch(keyword);
-  };
-  onSort = (name:string,value:string) => {
-    return this.props.onSort(name,value);
-  }
   public render() {
     return (
       <div className="row mt-15">
-        <TaskControlSearch onClickSearch={(keyword: string) => this.onClickSearch(keyword)} />
-        <TaskControlSort onSort={(name:string,value:string) => this.onSort(name,value)}/>
+        <TaskSearchControl />
+        <TaskSortControl />
       </div>
     );
   }

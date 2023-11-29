@@ -1,27 +1,30 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../actions';
 interface IAppProps { [propName: string]: any }
 interface IAppState {
-  task: {
-    [key: string]: any;
-  }
+  [keyword: string]: any
 }
 class TaskFilter extends React.Component<IAppProps, IAppState> {
-  constructor(props: IAppProps) {
-    super(props);
-    this.state = {
-      task: {},
-    };
+  onHandleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { value: keyword } = event.currentTarget;
+    this.props.filterTask(keyword);
   }
-  onFilter = (e: React.FormEvent<HTMLInputElement>) => {
-    const { currentTarget: { value: keyword } } = e;
-    return this.props.onFilter(keyword);
-  };
   public render() {
     return (
       <td>
-        <input type="text" className="form-control" name="filterName" onChange={this.onFilter} />
+        <input type="text" className="form-control" name="filterName" onChange={this.onHandleChange} />
       </td>
     );
   }
 }
-export default TaskFilter;
+const mapStateToProps = (state: any) => {
+  return {
+  }
+}
+const mapDispatchToProps = (dispatch: any, props: any) => {
+  return {
+    filterTask: (keyword: any) => dispatch(actions.filterTask(keyword))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(TaskFilter);

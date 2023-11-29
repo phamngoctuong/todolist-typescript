@@ -1,51 +1,47 @@
+/* eslint-disable eqeqeq */
 import * as React from 'react';
+import { connect } from 'react-redux';
+import * as actions from './../actions';
 interface IAppProps { [propName: string]: any }
 interface IAppState {
-  task: {
-    id?: string;
-    name: string;
-    status: number | string;
-  }
+  [key: string]: any;
 }
 class TaskForm extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.state = {
-      task: {
-        name: "",
-        status: 0
-      }
+      id: "",
+      name: "",
+      status: 0
     };
   }
   onHandleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = event.target;
-    var { task } = this.state;
+    const { name, value } = event.currentTarget;
     this.setState({
-      task: {
-        ...task,
-        [name]: value
-      }
-    });
+      [name]: value
+    })
   }
-  onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  onSave = (e: any) => {
     e.preventDefault();
-    var { task } = this.state;
-    return this.props.onSubmit(task);
+    var { state } = this;
+    this.setState({
+      id: "",
+      name: "",
+      status: 0
+    });
+    this.props.addTask(state);
   }
-  UNSAFE_componentWillReceiveProps(nextProps: Readonly<IAppProps>, nextContext: any): void {
-    if (nextProps) {
-      var task = {
-        id: nextProps.task.id,
-        name: nextProps.task.name,
-        status: nextProps.task.status
-      }
+  componentWillReceiveProps(nextProps: Readonly<IAppProps>, nextContext: any): void {
+    if (nextProps && nextProps.taskedit) {
       this.setState({
-        task: task
+        id: nextProps.taskedit.id,
+        name: nextProps.taskedit.name,
+        status: nextProps.taskedit.status
       });
     }
   }
   public render() {
-    var { task } = this.state;
+    var { name, status } = this.state;
     return (
       <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
         <div className="panel panel-warning">
@@ -56,15 +52,15 @@ class TaskForm extends React.Component<IAppProps, IAppState> {
             </h3>
           </div>
           <div className="panel-body">
-            <form onSubmit={(e) => this.onSubmit(e)}>
+            <form onSubmit={(e: any) => this.onSave(e)}>
               <div className="form-group">
                 <label>Tên :</label>
-                <input type="text" className="form-control" name="name" onChange={this.onHandleChange} value={task.name} />
+                <input type="text" className="form-control" name="name" value={name} onChange={this.onHandleChange} />
               </div>
               <label>Trạng Thái :</label>
-              <select className="form-control" name="status" onChange={this.onHandleChange} value={(task.status === '1' || task.status === 1) ? 1 : 0}>
-                <option value={0}>Ẩn</option>
+              <select className="form-control" name="status" value={status == 1 ? 1 : 0} onChange={this.onHandleChange}>
                 <option value={1}>Kích Hoạt</option>
+                <option value={0}>Ẩn</option>
               </select><br />
               <div className="text-center">
                 <button type="submit" className="btn btn-warning">
@@ -81,4 +77,14 @@ class TaskForm extends React.Component<IAppProps, IAppState> {
     );
   }
 }
-export default TaskForm;
+const mapStateToProps = (state: any) => {
+  return {
+    taskedit: state.taskedit
+  }
+}
+const mapDispatchToProps = (dispatch: any, props: any) => {
+  return {
+    addTask: (id: string) => dispatch(actions.addTask(id))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);

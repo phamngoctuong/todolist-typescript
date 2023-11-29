@@ -1,39 +1,54 @@
 import * as React from 'react';
 import TaskItem from './TaskItem';
+import { connect } from 'react-redux';
 import TaskFilter from './TaskFilter';
+import TaskfilterStatus from './TaskfilterStatus';
 interface IAppProps { [propName: string]: any }
 interface IAppState {
-  task: {
-    [key: string]: any;
-  }
+  [key: string]: any;
 }
-class TaskList extends React.Component<IAppProps, IAppState> {
-  constructor(props: IAppProps) {
-    super(props);
-    this.state = {
-      task: {},
-    };
-  }
-  onDelete = (id: string) => {
-    return this.props.onDelete(id);
-  }
-  onEdit = (task: any) => {
-    return this.props.onEdit(task);
-  }
-  onFilter = (keyword: string) => {
-    return this.props.onFilter(keyword);
-  };
-  onChangeStatus = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { value: status } = event.target;
-    return this.props.onChangeStatus(status);
-  }
+class TaskList extends React.Component<IAppProps> {
   public render() {
-    var { tasks } = this.props;
-    var tasksMap = tasks.map((task: IAppState, index: number) => <TaskItem onEdit={(taskE: any) => this.onEdit(taskE)} onDelete={(id: string) => this.onDelete(id)} key={index} index={index} task={task} />)
+    var { tasks, tasksearch, tasksort, status } = this.props;
+    var _ = require('lodash');
+    if (tasksearch) {
+      tasks = _.filter(tasks, function (o: any) {
+        return o.name.toLowerCase().includes(tasksearch.toString().toLowerCase());
+      });
+    }
+    if (tasksort.name) {
+      if (tasksort.name === "name") {
+        tasks.sort((a: any, b: any): any => {
+          if (a.name < b.name) return - tasksort.value;
+          if (a.name === b.name) return 0;
+          if (a.name > b.name) return tasksort.value;
+          return tasks;
+        });
+      }
+      if (tasksort.name === "status") {
+        tasks.sort((a: any, b: any): any => {
+          if (a.status < b.status) return - tasksort.value;
+          if (a.status === b.status) return 0;
+          if (a.status > b.status) return - tasksort.value;
+          return tasks;
+        });
+      }
+    }
+    if (status) {
+      tasks = _.filter(tasks, function (o: any) {
+        // eslint-disable-next-line eqeqeq
+        if (status != -1) {
+          // eslint-disable-next-line eqeqeq
+          return o.status == status;
+        }
+        return true;
+      });
+    }
+    var tasksMap = tasks.map((task: IAppState, index: number) => <TaskItem key={index} index={index} task={task} />)
     return (
       <div className="row mt-15">
         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <table className="table table-bordered table-hover text-center">
+          <table className="table table-bordered table-hover">
             <thead>
               <tr>
                 <th className="text-center">STT</th>
@@ -45,14 +60,8 @@ class TaskList extends React.Component<IAppProps, IAppState> {
             <tbody>
               <tr>
                 <td />
-                <TaskFilter onFilter={(keyword: string) => this.onFilter(keyword)} />
-                <td>
-                  <select className="form-control" name="filterStatus" onChange={this.onChangeStatus}>
-                    <option value={-1}>Tất Cả</option>
-                    <option value={0}>Ẩn</option>
-                    <option value={1}>Kích Hoạt</option>
-                  </select>
-                </td>
+                <TaskFilter />
+                <TaskfilterStatus />
                 <td />
               </tr>
               {tasksMap}
@@ -63,4 +72,15 @@ class TaskList extends React.Component<IAppProps, IAppState> {
     );
   }
 }
-export default TaskList;
+const mapStateToProps = (state: any) => {
+  return {
+    tasksearch: state.tasksearch,
+    tasksort: state.tasksort,
+    status: state.taskstatus
+  }
+}
+const mapDispatchToProps = (dispatch: any, props: any) => {
+  return {
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(TaskList);
