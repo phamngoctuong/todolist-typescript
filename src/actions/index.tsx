@@ -4,13 +4,13 @@ export const updateStatus = (id: any) => {
     type: types.UPDATE_STATUS_TASK,
     id
   }
-};
-export const deleteTask = (id: any) => {
+}
+export const deleteTask = (id: string) => {
   return {
     type: types.DELETE_TASK,
     id
   }
-};
+}
 export const addTask = (task: any) => {
   return {
     type: types.ADD_TASK,
@@ -29,21 +29,21 @@ export const searchTask = (keyword: string) => {
     keyword
   }
 };
-export const filterTask = (keyword: string) => {
+export const filterTask = (filterName: string) => {
   return {
     type: types.FILTER,
-    keyword
+    filterName
   }
 };
-export const sortTask = (payload: any) => {
+export const filterStatusTask = (filterStatus: string) => {
+  return {
+    type: types.FILTER_STATUS,
+    filterStatus
+  }
+};
+export const sortTask = (sort: any) => {
   return {
     type: types.SORT,
-    payload
-  }
-};
-export const statusTask = (status: number) => {
-  return {
-    type: types.STATUS,
-    status
+    sort
   }
 };

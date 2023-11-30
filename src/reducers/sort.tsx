@@ -1,14 +1,13 @@
 import * as types from "../constants/ActionTypes";
 var initialState = {
-  id: null,
-  name: "",
-  status: 0
+  name: "name",
+  status: -1
 };
 const myReducer = (state = initialState, action: any) => {
   switch (action.type) {
-    case types.EDIT_TASK:
-      var { task } = action;
-      return task;
+    case types.SORT:
+      var { sort } = action;
+      return sort;
     default:
       return state;
   }

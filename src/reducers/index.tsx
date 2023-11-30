@@ -1,14 +1,10 @@
 import { combineReducers } from "redux";
 import tasks from "./tasks";
 import taskedit from "./taskedit";
-import tasksearch from "./tasksearch";
-import tasksort from "./tasksort";
-import taskstatus from "./taskstatus";
+import sort from "./sort";
 const myReducer = combineReducers({
   tasks,
   taskedit,
-  tasksearch,
-  tasksort,
-  taskstatus
+  sort
 });
 export default myReducer;

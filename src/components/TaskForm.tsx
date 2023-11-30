@@ -1,16 +1,13 @@
-/* eslint-disable eqeqeq */
 import * as React from 'react';
-import { connect } from 'react-redux';
-import * as actions from './../actions';
 interface IAppProps { [propName: string]: any }
 interface IAppState {
-  [key: string]: any;
+  [propName: string]: any
 }
 class TaskForm extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.state = {
-      id: "",
+      id: null,
       name: "",
       status: 0
     };
@@ -21,16 +18,6 @@ class TaskForm extends React.Component<IAppProps, IAppState> {
       [name]: value
     })
   }
-  onSave = (e: any) => {
-    e.preventDefault();
-    var { state } = this;
-    this.setState({
-      id: "",
-      name: "",
-      status: 0
-    });
-    this.props.addTask(state);
-  }
   componentWillReceiveProps(nextProps: Readonly<IAppProps>, nextContext: any): void {
     if (nextProps && nextProps.taskedit) {
       this.setState({
@@ -40,6 +27,16 @@ class TaskForm extends React.Component<IAppProps, IAppState> {
       });
     }
   }
+  onSave = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    event.preventDefault();
+    var { id, name, status } = this.state;
+    this.props.onSave({ id, name, status });
+    this.setState({
+      id: null,
+      name: "",
+      status: 0
+    });
+  };
   public render() {
     var { name, status } = this.state;
     return (
@@ -52,15 +49,15 @@ class TaskForm extends React.Component<IAppProps, IAppState> {
             </h3>
           </div>
           <div className="panel-body">
-            <form onSubmit={(e: any) => this.onSave(e)}>
+            <form onSubmit={(e: any) => this.onSave(e)} >
               <div className="form-group">
                 <label>Tên :</label>
-                <input type="text" className="form-control" name="name" value={name} onChange={this.onHandleChange} />
+                <input type="text" className="form-control" value={name} name="name" onChange={this.onHandleChange} />
               </div>
               <label>Trạng Thái :</label>
-              <select className="form-control" name="status" value={status == 1 ? 1 : 0} onChange={this.onHandleChange}>
-                <option value={1}>Kích Hoạt</option>
+              <select className="form-control" name="status" value={status} onChange={this.onHandleChange}>
                 <option value={0}>Ẩn</option>
+                <option value={1}>Kích Hoạt</option>
               </select><br />
               <div className="text-center">
                 <button type="submit" className="btn btn-warning">
@@ -77,14 +74,4 @@ class TaskForm extends React.Component<IAppProps, IAppState> {
     );
   }
 }
-const mapStateToProps = (state: any) => {
-  return {
-    taskedit: state.taskedit
-  }
-}
-const mapDispatchToProps = (dispatch: any, props: any) => {
-  return {
-    addTask: (id: string) => dispatch(actions.addTask(id))
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);
+export default TaskForm;

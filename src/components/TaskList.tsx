@@ -1,50 +1,15 @@
 import * as React from 'react';
 import TaskItem from './TaskItem';
-import { connect } from 'react-redux';
 import TaskFilter from './TaskFilter';
-import TaskfilterStatus from './TaskfilterStatus';
+import TaskFilterStatus from './TaskFilterStatus';
 interface IAppProps { [propName: string]: any }
 interface IAppState {
   [key: string]: any;
 }
-class TaskList extends React.Component<IAppProps> {
+class TaskList extends React.Component<IAppProps, IAppState> {
   public render() {
-    var { tasks, tasksearch, tasksort, status } = this.props;
-    var _ = require('lodash');
-    if (tasksearch) {
-      tasks = _.filter(tasks, function (o: any) {
-        return o.name.toLowerCase().includes(tasksearch.toString().toLowerCase());
-      });
-    }
-    if (tasksort.name) {
-      if (tasksort.name === "name") {
-        tasks.sort((a: any, b: any): any => {
-          if (a.name < b.name) return - tasksort.value;
-          if (a.name === b.name) return 0;
-          if (a.name > b.name) return tasksort.value;
-          return tasks;
-        });
-      }
-      if (tasksort.name === "status") {
-        tasks.sort((a: any, b: any): any => {
-          if (a.status < b.status) return - tasksort.value;
-          if (a.status === b.status) return 0;
-          if (a.status > b.status) return - tasksort.value;
-          return tasks;
-        });
-      }
-    }
-    if (status) {
-      tasks = _.filter(tasks, function (o: any) {
-        // eslint-disable-next-line eqeqeq
-        if (status != -1) {
-          // eslint-disable-next-line eqeqeq
-          return o.status == status;
-        }
-        return true;
-      });
-    }
-    var tasksMap = tasks.map((task: IAppState, index: number) => <TaskItem key={index} index={index} task={task} />)
+    var { tasks } = this.props;
+    var tasksMap = tasks.length ? tasks?.map((task: IAppState, index: number) => <TaskItem editTask={(task: any) => this.props.editTask(task)} updateStatus={(id: string) => this.props.updateStatus(id)} onDeleteTask={(id: string) => this.props.onDeleteTask(id)} key={index} index={index} task={task} />) : [];
     return (
       <div className="row mt-15">
         <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -60,9 +25,8 @@ class TaskList extends React.Component<IAppProps> {
             <tbody>
               <tr>
                 <td />
-                <TaskFilter />
-                <TaskfilterStatus />
-                <td />
+                <TaskFilter onFilterChange={(filterName: string) => this.props.onFilterChange(filterName)} />
+                <TaskFilterStatus onFilterStatusChange={(filterStatus: number) => this.props.onFilterStatusChange(filterStatus)} />
               </tr>
               {tasksMap}
             </tbody>
@@ -72,15 +36,4 @@ class TaskList extends React.Component<IAppProps> {
     );
   }
 }
-const mapStateToProps = (state: any) => {
-  return {
-    tasksearch: state.tasksearch,
-    tasksort: state.tasksort,
-    status: state.taskstatus
-  }
-}
-const mapDispatchToProps = (dispatch: any, props: any) => {
-  return {
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(TaskList);
+export default TaskList;

@@ -1,7 +1,4 @@
-/* eslint-disable eqeqeq */
 import * as React from 'react';
-import { connect } from 'react-redux';
-import * as actions from './../actions';
 interface IAppProps { [propName: string]: any }
 interface IAppState {
 }
@@ -11,15 +8,6 @@ class TaskItem extends React.Component<IAppProps, IAppState> {
     this.state = {
     };
   }
-  updateStatus = () => {
-    this.props.updateStatus(this.props.task.id)
-  }
-  onDeleteTask = (id: string) => {
-    this.props.deleteTask(id);
-  };
-  onEditTask = (task: any) => {
-    this.props.editTask(task);
-  }
   public render() {
     var { task, index } = this.props;
     return (
@@ -28,14 +16,14 @@ class TaskItem extends React.Component<IAppProps, IAppState> {
         <td>{task.name}</td>
         <td className="text-center">
           <span
-            className={this.props.task.status == 1 ? 'label label-info' : 'label label-danger'} onClick={this.updateStatus}>
-            {this.props.task.status == 1 ? 'Kích Hoạt' : 'Ẩn'}</span>
+            // eslint-disable-next-line eqeqeq
+            className={this.props.task.status == 0 ? 'label label-danger' : 'label label-info'} onClick={() => this.props.updateStatus(task.id)}>{this.props.task.status == 1 ? 'Kích Hoạt' : 'Ẩn'}</span>
         </td>
         <td className="text-center">
-          <button type="button" className="btn btn-warning mr-5" onClick={() => this.onEditTask(task)}>
+          <button type="button" className="btn btn-warning mr-5" onClick={() => this.props.editTask(task)}>
             <span className="fa fa-pencil" />Sửa
           </button>
-          <button type="button" className="btn btn-danger" onClick={() => this.onDeleteTask(task.id)}>
+          <button type="button" className="btn btn-danger" onClick={() => this.props.onDeleteTask(task.id)}>
             <span className="fa fa-trash" />Xóa
           </button>
         </td>
@@ -43,16 +31,4 @@ class TaskItem extends React.Component<IAppProps, IAppState> {
     );
   }
 }
-const mapStateToProps = (state: any) => {
-  return {
-    tasks: state.tasks
-  }
-}
-const mapDispatchToProps = (dispatch: any, props: any) => {
-  return {
-    updateStatus: (id: any) => dispatch(actions.updateStatus(id)),
-    deleteTask: (id: string) => dispatch(actions.deleteTask(id)),
-    editTask: (task: any) => dispatch(actions.editTask(task))
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(TaskItem);
+export default TaskItem;

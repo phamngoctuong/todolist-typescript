@@ -1,6 +1,6 @@
 import * as React from 'react';
-import TaskSearchControl from './TaskSearchControl';
 import TaskSortControl from './TaskSortControl';
+import TaskSearchControl from './TaskSearchControl';
 interface IAppProps { [propName: string]: any }
 interface IAppState {
 }
@@ -11,10 +11,11 @@ class TaskControl extends React.Component<IAppProps, IAppState> {
     };
   }
   public render() {
+    var { sort } = this.props;
     return (
       <div className="row mt-15">
-        <TaskSearchControl />
-        <TaskSortControl />
+        <TaskSearchControl onSearch={(keyword: string) => this.props.onSearch(keyword)} />
+        <TaskSortControl onSort={(sort: any) => this.props.onSort(sort)} sort={sort} />
       </div>
     );
   }
